@@ -1,0 +1,65 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<h3 class="text-center text-primary">@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="d-flex justify-content-center">
+    <div class="col-md-6 card p-4 shadow-sm">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <!-- صورة الملف الشخصي -->
+            <div class="text-center">
+                <img id="profileImg" src="@Model.ProfilePictureUrl" class="rounded-circle shadow"
+                     style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #007bff;" />
+                <div class="mt-2">
+                    <label class="btn btn-outline-secondary">
+                        Change Picture
+                        <input asp-for="Input.ProfilePicture" type="file" class="form-control d-none"
+                               accept="image/png, image/jpeg" onchange="previewImage(event)" />
+                    </label>
+                </div>
+            </div>
+
+            <!-- الإيميل (عرض فقط) -->
+            <div class="form-floating mb-3">
+                <input class="form-control" value="@Model.Email" disabled />
+                <label>Email</label>
+            </div>
+
+            <!-- الاسم الكامل -->
+            <div class="form-floating mb-3">
+                <input asp-for="Input.FullName" class="form-control" placeholder="Enter your name." />
+                <label asp-for="Input.FullName" class="form-label"></label>
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            </div>
+
+            <!-- رقم الهاتف -->
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Enter your phone number." />
+                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewImage(event) {
+            var output = document.getElementById('profileImg');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function() {
+                URL.revokeObjectURL(output.src)
+            }
+        }
+    </script>
+}
