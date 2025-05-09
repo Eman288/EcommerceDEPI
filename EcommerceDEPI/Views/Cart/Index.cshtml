@@ -1,0 +1,256 @@
+﻿@model EcommerceDEPI.Models.Cart
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-center text-primary fw-bold">🛒 Your Shopping Cart</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @ViewBag.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <table class="table table-hover">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.CartProducts)
+                                {
+                                    if (item.Product != null)
+                                    {
+                                        <tr data-id="@item.ProductId">
+                                            <td class="align-middle">@item.Product.Name</td>
+                                            <td class="align-middle">@item.Product.Price.ToString("C")</td>
+                                            <td class="align-middle">
+                                                <div class="input-group input-group-sm w-50">
+                                                    <button class="btn btn-outline-primary update-qty" data-change="-1">-</button>
+                                                    <input type="text" class="form-control text-center quantity" value="@item.Quantity" readonly />
+                                                    <button class="btn btn-outline-primary update-qty" data-change="1">+</button>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle item-total">@((item.Quantity * item.Product.Price).ToString("C"))</td>
+                                            <td class="align-middle">
+                                                <form asp-action="RemoveFromCart" method="post">
+                                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                                    <button class="btn btn-sm btn-danger">✖<i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                        <a class="btn btn-outline-secondary mt-3" asp-controller="Product" asp-action="Index">
+                            <i class="bi bi-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart Summary & Checkout -->
+            <div class="col-lg-4">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h4 class="card-title mb-4 text-primary">Order Summary</h4>
+
+                            <p class="mb-2">Total Items: <strong>@Model.CartProducts.Sum(p => p.Quantity)</strong></p>
+                            <p class="mb-4">Total Price: <strong id="cart-total">@Model.CartProducts.Sum(p => p.Quantity * p.Product.Price).ToString("C")</strong></p>
+
+                            <hr />
+
+                            <form asp-action="Checkout" asp-controller="Order" method="post" class="needs-validation" novalidate>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Shipping Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" required />
+                                    <div class="invalid-feedback">Please provide a valid address.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="zipcode" class="form-label">Zipcode</label>
+                                    <input type="text" class="form-control" id="zipcode" name="zipcode" required pattern="\d{5}" title="Zipcode must be 5 digits" />
+                                    <div class="invalid-feedback">Please provide a valid 5-digit zipcode.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="discountCode" class="form-label">Discount Code</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="discountCode" name="discountCode" />
+                                        <input type="hidden" name="discountCode" id="hiddenDiscountCode" value="" />
+                                        <button type="button" class="btn btn-outline-primary" id="applyDiscount">Apply</button>
+                                    </div>
+                                    <div id="discount-summary" class="alert alert-success mt-2 d-none">
+                                        Discount applied! New total: <strong id="discounted-total"></strong>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="paymentMethod" class="form-label">Payment Method</label>
+                                    <select class="form-select" id="paymentMethod" name="paymentMethod" required>
+                                        <option value="" disabled selected>Select payment method</option>
+                                        <option value="Card">Card</option>
+                                        <option value="Paypal">PayPal</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select a payment method.</div>
+                                </div>
+
+                                <div id="card-info" class="mb-3 d-none">
+                                    <div class="mb-3">
+                                        <label for="cardNumber" class="form-label">Card Number</label>
+                                        <input type="text" class="form-control" id="cardNumber" name="cardNumber" pattern="\d{15,16}" title="Card number must be 15 or 16 digits" maxlength="16" placeholder="1234 5678 9012 3456" />
+                                        <div class="invalid-feedback">Please provide a valid card number.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="expirationDate" class="form-label">Expiration Date (MM/YY)</label>
+                                        <input type="text" class="form-control" id="expirationDate" name="expirationDate" pattern="(0[1-9]|1[0-2])\/[0-9]{2}" title="Enter date as MM/YY (e.g., 12/25)" placeholder="MM/YY" />
+                                        <div class="invalid-feedback">Please provide a valid expiration date.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cvv" class="form-label">CVV</label>
+                                        <input type="text" class="form-control" id="cvv" name="cvv" pattern="\d{3,4}" title="CVV must be 3 or 4 digits" maxlength="4" placeholder="123" />
+                                        <div class="invalid-feedback">Please provide a valid CVV.</div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 mt-4">Complete Checkout</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning mt-3">
+                        Please <a asp-controller="Account" asp-action="Login">Login</a> to checkout.
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Bootstrap form validation
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+        $(".update-qty").click(function () {
+            var btn = $(this);
+            var row = btn.closest("tr");
+            var productId = row.data("id");
+            var change = parseInt(btn.data("change"));
+
+            $.ajax({
+                url: "/Cart/UpdateQuantity",
+                type: "POST",
+                data: { productId, change },
+                beforeSend: function () {
+                    btn.prop("disabled", true);
+                },
+                success: function (res) {
+                    if (res.success) {
+                        const qtyInput = row.find(".quantity");
+                        const newQty = parseInt(qtyInput.val()) + change;
+                        if (newQty <= 0) {
+                            row.remove();
+                        } else {
+                            qtyInput.val(newQty);
+                            row.find(".item-total").text(res.itemTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+                        }
+                        $("#cart-total").text(res.cartTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+                    } else {
+                        alert(res.message || "Failed to update quantity.");
+                    }
+                },
+                complete: function () {
+                    btn.prop("disabled", false);
+                }
+            });
+        });
+
+        $("#applyDiscount").click(function () {
+            const code = $("#discountCode").val();
+            $.ajax({
+                url: "/Order/ApplyDiscount",
+                type: "POST",
+                data: { discountCode: code },
+                beforeSend: function () {
+                    $("#applyDiscount").prop("disabled", true);
+                },
+                success: function (res) {
+                    if (res.success) {
+                        $("#discount-summary").removeClass("d-none");
+                        $("#discounted-total").text(res.newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+                        $("#cart-total").text(res.newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+                        $("#hiddenDiscountCode").val(code);
+                    } else {
+                        alert(res.message || "Invalid discount code.");
+                    }
+                },
+                complete: function () {
+                    $("#applyDiscount").prop("disabled", false);
+                }
+            });
+        });
+
+        $("#paymentMethod").change(function () {
+            var cardInfo = $("#card-info");
+            var cardInputs = $("#cardNumber, #expirationDate, #cvv");
+
+            if ($(this).val() === "Card") {
+                cardInfo.removeClass("d-none");
+                cardInputs.prop("required", true);
+            } else {
+                cardInfo.addClass("d-none");
+                cardInputs.prop("required", false);
+                cardInputs.val(""); // Clear card fields when not using Card
+            }
+        });
+
+        // Ensure card fields are cleared on form submission if payment method is not Card
+        $("form").submit(function () {
+            if ($("#paymentMethod").val() !== "Card") {
+                $("#cardNumber, #expirationDate, #cvv").val("");
+            }
+        });
+    </script>
+}

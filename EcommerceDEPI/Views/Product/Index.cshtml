@@ -1,0 +1,119 @@
+﻿@using EcommerceDEPI.Models
+@model IEnumerable<Product>
+
+@{
+    var cats = ViewData["categories"] as List<Category>;
+}
+
+<div class="products-index">
+    <!-- Sidebar Filter -->
+    <aside class="filter">
+        <div class="category">
+            <h3>التصنيفات</h3>
+            <ul>
+                @foreach (var c in cats)
+                {
+                        <li>
+                            <a href="#" data-category-id="@c.Id">@c.Name</a>
+                        </li>
+                }
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Product Section -->
+    <section class="products">
+        <h2>المنتجات</h2>
+
+        <!-- Search Input -->
+        <input type="text" id="searchBox" class="form-control" placeholder="ابحث عن منتج...">
+
+        <!-- Product Cards Grid -->
+        <div class="sec1-cards" id="productList">
+            @foreach (var product in Model.Take(12))
+            {
+                    <div class="product-card product-item" data-category="@product.CategoryId">
+                        <a href="@Url.Action("Details", "Product", new { id = product.Id })">
+                            <img loading="lazy" src="@(string.IsNullOrEmpty(product.Picture) ? "/imgs/Product/default.jpg" : product.Picture)" alt="@product.Name">
+                        </a>
+                        <div class="card-details">
+                            <h6 class="card-title">@product.Name</h6>
+                            <p class="card-text">@product.Price$</p>
+                            <div class="actions">
+                                <a class="btn btn-success add-to-cart" data-product-id="@product.Id">
+                                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                                    <i class="fas fa-shopping-cart"></i>
+                                </a>
+                                <form asp-controller="Wishlist" asp-action="AddToWishlist" method="post">
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <button type="submit" class="btn btn-outline-danger" title="أضف إلى المفضلة">
+                                        ❤
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </div>
+
+        <!-- Load More Button -->
+        <div class="load-more">
+            <button id="loadMoreBtn">Load More →</button>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+    // === Debounced Product Filter ===
+    let debounceTimeout;
+    document.getElementById("searchBox").addEventListener("keyup", function () {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(filterProducts, 300);
+    });
+
+    function filterProducts() {
+        const search = document.getElementById("searchBox").value.toLowerCase();
+        const items = document.querySelectorAll(".product-item");
+
+        items.forEach(item => {
+            const name = item.querySelector(".card-title").textContent.toLowerCase();
+            const desc = item.querySelector(".card-text").textContent.toLowerCase();
+            const matches = name.includes(search) || desc.includes(search);
+            item.style.display = matches ? "block" : "none";
+            item.classList.toggle("fade-in", matches);
+        });
+    }
+
+    // === Add to Cart AJAX ===
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+
+            fetch('/Cart/AddToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `productId=${productId}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    toastr.success('تمت إضافة المنتج للسلة!');
+                } else {
+                    toastr.error(data.message || 'فشل في الإضافة');
+                }
+            })
+            .catch(() => toastr.error("حدث خطأ"));
+        });
+    });
+
+    // === Placeholder for Load More Pagination ===
+    let visibleCount = 12;
+    document.getElementById("loadMoreBtn").addEventListener("click", () => {
+        // You would replace this with an AJAX fetch to load the next set of products
+        toastr.info("Load more functionality not implemented yet.");
+    });
+    </script>
+}

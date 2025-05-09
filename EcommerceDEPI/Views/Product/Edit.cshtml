@@ -1,0 +1,93 @@
+﻿
+@{
+    var cats = ViewData["cats"] as List<string>;
+
+}
+@model EcommerceDEPI.Models.Product;
+
+
+<style>
+    body {
+        margin: 0 !important;
+    }
+
+    .container {
+        margin: 0;
+        padding: 0;
+        height: 90vh;
+        width: 100%;
+        max-width: none !important;
+        padding: 0 5%;
+    }
+
+    main.pb-3 {
+        padding: 0 !important;
+        height: 100%;
+        width: 100%;
+    }
+
+    nav {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 10vh !important;
+    }
+
+    footer {
+        height: 10%;
+    }
+</style>
+
+<div class="form">
+
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        
+        <div class="form-group">
+            <label>Upload New Picture</label>
+            <input type="file" class="form-control" name="imageFile" accept="image/*" />
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Picture))
+
+        {
+            <div class="form-group">
+                <img src="~/images/@Model.Picture" alt="Product Image" style="max-height: 150px;" />
+            </div>
+        }
+        <div>
+            <label for="name">Name</label>
+            <input type="text" required id="name" name="name" value="@Model.Name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label for="description">Description</label>
+            <input type="text" required id="description" name="description" value="@Model.Description" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label for="price">Price</label>
+            <input type="text" required id="price" name="price" value="@Model.Price" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label for="amount">Amount</label>
+            <input type="text" required id="amount" name="amount" value="@Model.Amount" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label for="category">Category</label>
+            <select id="category" name="category">
+                @foreach (var c in cats)
+                {
+                    <option value="@c">@c</option>
+                }
+            </select>
+        </div>
+
+
+        <button type="submit">Edit</button>
+    </form>
+</div>

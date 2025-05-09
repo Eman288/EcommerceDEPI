@@ -1,0 +1,184 @@
+﻿@model EcommerceDEPI.Models.Order
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Details</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .order-details {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .table th, .table td {
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.5em 1em;
+        }
+
+        .btn-lg {
+            font-size: 1.1rem;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+
+        .text-primary {
+            color: #007bff !important;
+        }
+
+        h2, h4 {
+            font-weight: 600;
+        }
+
+        .list-group-item {
+            border: none;
+            padding: 10px 0;
+        }
+
+        .order-details h2 {
+            color: #343a40;
+            margin-bottom: 30px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container order-details mt-5">
+        <h2 class="text-center">Order Details</h2>
+
+        <!-- Order Items Table -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <table class="table table-hover table-borderless">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.Product.Name</td>
+                                <td>@item.Amount</td>
+                                <td>@((item.Product.Price * item.Amount).ToString("C"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Discounts Section -->
+        @if (Model.OrderDiscounts.Any())
+        {
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">Discounts Applied</h4>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var orderDiscount in Model.OrderDiscounts)
+                        {
+                            <li class="list-group-item">
+                                <span class="badge bg-success me-2">@orderDiscount.Discount.Code</span>
+                                @orderDiscount.Discount.Percentage% Off
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        <!-- Total Price -->
+        <div class="text-end mb-4">
+            <h4 class="fw-bold">Total: <span class="text-primary">@Model.TotalPrice.ToString("C")</span></h4>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                @if (Model.Payment == null)
+                {
+                    <a href="@Url.Action("Pay", "Payment", new { orderId = Model.Id })" class="btn btn-success btn-lg">
+                        <i class="bi bi-credit-card me-2"></i> Pay Now
+                    </a>
+                }
+                else
+                {
+                    <p class="mb-0"><strong>Payment Method:</strong> @Model.Payment.Method</p>
+                }
+            </div>
+        </div>
+
+        <!-- Order Status -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <p class="mb-0">
+                    <strong>Status:</strong>
+                    <span class="badge bg-@GetStatusColor(Model.OrderStatus)">@Model.OrderStatus</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Review Button -->
+        @if (Model.OrderStatus == "Delivered" && !Model.Reviews.Any())
+        {
+            <div class="text-center">
+                <a href="@Url.Action("AddReview", "Order", new { orderId = Model.Id })" class="btn btn-primary btn-lg">
+                    <i class="bi bi-star-fill me-2"></i> Add Review
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @* Helper method for status badge color *@
+    @functions {
+        public string GetStatusColor(string status)
+        {
+            return status switch
+            {
+                "Delivered" => "success",
+                "Pending" => "warning",
+                "Cancelled" => "danger",
+                "Shipped" => "info",
+                _ => "secondary"
+            };
+        }
+    }
+</body>
+</html>

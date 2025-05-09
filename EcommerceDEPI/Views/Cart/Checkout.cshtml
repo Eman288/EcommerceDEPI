@@ -1,0 +1,35 @@
+﻿@model EcommerceDEPI.Models.Cart
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2>Order Summary</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CartProducts)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Product.Price.ToString("C")</td>
+                <td>@item.Quantity</td>
+                <td>@((item.Quantity * item.Product.Price).ToString("C"))</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>Total: @Model.CartProducts.Sum(x => x.Product.Price * x.Quantity).ToString("C")</h4>
+
+<form asp-action="PlaceOrder" method="post">
+    <button type="submit" class="btn btn-success">Confirm Order</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to Cart</a>
+</form>

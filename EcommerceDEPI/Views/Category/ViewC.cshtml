@@ -1,0 +1,63 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using EcommerceDEPI.Models;
+@{
+    var cats = ViewData["cats"] as List<Category>;
+}
+
+<style>
+    body {
+        margin: 0 !important;
+    }
+
+    .container {
+        margin: 0;
+        padding: 0;
+        height: 90vh;
+        width: 100%;
+        max-width: none !important;
+        padding: 0 5%;
+    }
+
+    main.pb-3 {
+        padding: 0 !important;
+        height: 100%;
+        width: 100%;
+    }
+
+    nav {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 10vh !important;
+    }
+
+    footer {
+        height: 10%;
+    }
+</style>
+
+<a class="create-button" asp-controller="Category" asp-action="Create">Create a Category</a>
+
+<table>
+    <thead>
+        <th>Id</th>
+        <th>Name</th>
+        <th colspan="2">Actions</th>
+    </thead>
+    <tbody>
+        @foreach (var c in cats)
+        {
+            <tr>
+                <td>@c.Id</td>
+                <td>@c.Name</td>
+                <td>
+                    <a asp-controller="Category" asp-action="Edit" asp-route-cID="@c.Id">Edit</a>
+                </td>
+                <td>
+                    <a asp-controller="Category" asp-action="Delete" asp-route-cID="@c.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

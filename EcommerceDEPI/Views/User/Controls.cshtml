@@ -1,0 +1,396 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using EcommerceDEPI.Models;
+@{
+
+    var cats = ViewData["cats"] as List<Category>;
+
+    var pros = ViewData["pros"] as List<Product>;
+
+}
+
+<div class="controls">
+     @* <a asp-controller="Category" asp-action="ViewC">Categories</a>
+
+     <a asp-controller="Product" asp-action="ViewP">Products</a> *@
+
+
+     <div class="categories">
+        <a class="create-button" onclick="PopUp('pop-up3', 1, -1)" @* asp-controller="Category" asp-action="Create" *@>Create a Category</a>
+
+        <table>
+            <thead>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Actions</th>
+            </thead>
+            <tbody>
+                @foreach (var c in cats)
+                {
+                    <tr>
+                        <td>@c.Id</td>
+                        <td>@c.Name</td>
+                        <td>
+                            <a onclick="PopUp('pop-up4', 1, @c.Id)" @* asp-controller="Category" asp-action="Edit" asp-route-cID="@c.Id" *@>Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+     <div class="products">
+        <a class="create-button" onclick="PopUp('pop-up1', 1, -1)" @* asp-controller="Product" asp-action="Create" *@>Create a Product</a>
+
+        <table>
+            <thead>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+                @foreach (var p in pros)
+                {
+                    <tr>
+                        <td>@p.Id</td>
+                        <td>@p.Name</td>
+                        <td>@p.Amount</td>
+                        <td>@p.Price</td>
+                        <td>
+                            <a onclick="PopUp('pop-up2', 1, @p.Id)" @* asp-controller="Product" asp-action="Edit" asp-route-pID="@p.Id" *@>Edit</a>
+                        </td>
+                        
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="formProduct-create" id="pop-up1">
+    <a onclick="PopUp('pop-up1', 0, -1)">✖</a>
+    @if (TempData["ProductError"] != null)
+    {
+        <p style="color: red;">@TempData["ProductError"]</p>
+        <script>
+            window.onload = function () {
+                PopUp('pop-up1', 1, -1); // open the popup if there is an error
+            }
+        </script>
+    }
+    else if (TempData["ProductSuccess"] != null)
+    {
+        <script>
+            window.onload = function () {
+                alert('@TempData["ProductSuccess"]');
+            }
+        </script>
+    }
+
+    <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data">
+        <div class="content">
+            <div>
+                <label for="name">Name</label>
+                <input type="text" required id="name" name="name" />
+                @* <span asp-validation-for="Name" class="text-danger"></span> *@
+            </div>
+
+            <div>
+                <label for="description">Description</label>
+                <input type="text" required id="description" name="description" />
+                @* <span asp-validation-for="Description" class="text-danger"></span> *@
+            </div>
+
+            <div>
+                <label for="price">Price</label>
+                <input type="text" required id="price" name="price" />
+                @* <span asp-validation-for="Price" class="text-danger"></span> *@
+            </div>
+
+            <div>
+                <label for="amount">Amount</label>
+                <input type="text" required id="amount" name="amount" />
+                @* <span asp-validation-for="Amount" class="text-danger"></span> *@
+            </div>
+            <div class="form-group">
+                <label for="fileInput" class="custom-file-label">Upload File</label>
+                <input id="fileInput" type="file" class="form-control" name="imageFile" accept="image/*" hidden/>
+                <span id="fileNameDisplay" class="file-name"></span>
+            </div>
+
+
+            <div>
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    <option value="">-- Select a Category --</option>
+                    @foreach (var c in cats)
+                    {
+                        <option value="@c.Name">@c.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button type="submit">Create</button>
+    </form>
+
+</div>
+
+<div class="formProduct-edit" id="pop-up2">
+    <a onclick="PopUp('pop-up2', 0, -1)">✖</a>
+
+     @if (TempData["ProductErrorE"] != null)
+    {
+        <p style="color: red;">@TempData["ProductErrorE"]</p>
+        <script>
+            window.onload = function () {
+                PopUp('pop-up2', 1, @TempData["pid"]); // open the popup if there is an error
+            }
+        </script>
+    }
+    else if (TempData["ProductSuccessE"] != null)
+    {
+        <script>
+            window.onload = function () {
+                alert('@TempData["ProductSuccessE"]');
+            }
+        </script>
+    }
+    <form asp-action="Edit" asp-controller="Product" method="post" enctype="multipart/form-data">
+
+        <div class="content">
+            
+            @* @if (!string.IsNullOrEmpty(Model.Picture))
+
+            {
+            <div class="form-group">
+            <img src="~/images/" alt="Product Image" style="max-height: 150px;" />
+            </div>
+            } *@
+            <input type="hidden" id="idp" name="Id" />
+            <div>
+                <label for="name">Name</label>
+                <input type="text" required id="namep" name="name" />
+                @* <span asp-validation-for="Name" class="text-danger"></span>  *@
+            </div>
+
+            <div>
+                <label for="description">Description</label>
+                <input type="text" required id="descriptionp" name="description" />
+                @* <span asp-validation-for="Description" class="text-@* danger"></span>  *@
+            </div>
+
+            <div>
+                <label for="price">Price</label>
+                <input type="text" required id="pricep" name="price" />
+                @* <span asp-validation-for="Price" class="text-danger"></span>  *@
+            </div>
+
+            <div>
+                <label for="amount">Amount</label>
+                <input type="text" required id="amountp" name="amount" />
+                @* <span asp-validation-for="Amount" class="text-danger"></span> *@
+            </div>
+
+            <div class="form-group">
+                <label for="fileInputu" class="custom-file-label">Upload File</label>
+                <input id="fileInputu" type="file" class="form-control" name="imageFile" accept="image/*" hidden/>
+                <span id="fileNameDisplayu" class="file-name"></span>
+            </div>
+
+            <div>
+                <label for="category">Category</label>
+                <select id="categoryp" name="category">
+                    @foreach (var c in cats)
+                    {
+                        <option value="@c">@c.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+
+        <button type="submit">Edit</button>
+    </form>
+</div>
+
+
+<div class="formCategory-create" id="pop-up3">
+    <a onclick="PopUp('pop-up3', 0, -1)">✖</a>
+
+    @if (TempData["CategoryError"] != null)
+    {
+        <p style="color: red;">@TempData["CategoryError"]</p>
+        <script>
+            window.onload = function () {
+                PopUp('pop-up3', 1, -1); // open the popup if there is an error
+            }
+        </script>
+    }
+    else if (TempData["CategorySuccess"] != null)
+    {
+        <script>
+            window.onload = function () {
+                alert('@TempData["CategorySuccess"]');
+            }
+        </script>
+    }
+
+    <form asp-controller="Category" asp-action="Create" method="post">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" required id="name" name="name" />
+        </div>
+        <button type="submit">Create</button>
+    </form>
+</div>
+
+
+<div class="formCategory-edit" id="pop-up4">
+    <a onclick="PopUp('pop-up4', 0, -1)">✖</a>
+
+    @if (TempData["CategoryErrorE"] != null)
+    {
+        <p style="color: red;">@TempData["CategoryErrorE"]</p>
+        <script>
+            window.onload = function(){
+                PopUp('pop-up4', 1, @TempData["cid"]);
+            }
+        </script>
+    }
+    else  if (TempData["CategorySuccessE"] != null)
+    {
+        <script>
+            alert(@TempData["CategorySuccessE"]);
+         </script>
+    }
+    <form asp-controller="Category" asp-action="Edit" method="post">
+        <div>
+            <input id="idc" type="number" name="id" hidden/>
+            <label for="name">Name</label>
+            <input type="text" required id="namec" name="name"/>
+            @* <span asp-validation-for="Name" class="text-danger"></span> *@
+        </div>
+
+        <button type="submit">Edit</button>
+    </form>
+</div> 
+
+<script>
+    // window.onload => () {
+    // }
+    var isPopUpOpen = 0;
+
+    var isPopUpOpen = 0;
+
+    function PopUp(idName, mode, id) {
+        var ele = document.getElementById(idName);
+        if (mode == 0) {
+            ele.style.display = "none";
+            isPopUpOpen = 0;
+        }
+        else if (isPopUpOpen == 0) {
+            ele.style.display = "block";
+            isPopUpOpen = 1;
+            if (id != -1) { // we need to get the data into the form
+                if (idName == 'pop-up2') { // edit product
+                    const allRows = document.querySelectorAll('.products table tbody tr');
+
+                    let selectedRow = null;
+                    allRows.forEach(row => {
+                        const idCell = row.querySelector('td:first-child'); // The first <td> is the Id
+                        if (idCell && idCell.textContent.trim() == id.toString()) {
+                            selectedRow = row;
+                        }
+                    });
+
+                    if (selectedRow) {
+                        const cells = selectedRow.querySelectorAll('td');
+                        const idValue = cells[0].textContent.trim();
+                        const nameValue = cells[1].textContent.trim();
+                        const descriptionValue = cells[2].textContent.trim();
+                        const priceValue = cells[3].textContent.trim();
+                        const amountValue = cells[4].textContent.trim();
+                        const categoryValue = cells[5].textContent.trim();
+
+                        // Fill form inputs
+                        document.getElementById('idp').value = +idValue;
+                        document.getElementById('namep').value = nameValue;
+                        document.getElementById('descriptionp').value = descriptionValue;
+                        document.getElementById('pricep').value = priceValue;
+                        document.getElementById('amountp').value = amountValue;
+
+                        // Select correct category
+                        var categorySelect = document.getElementById('categoryp');
+                        for (var i = 0; i < categorySelect.options.length; i++) {
+                            if (categorySelect.options[i].text.trim() == categoryValue) {
+                                categorySelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+
+                    } else {
+                        console.log('Row not found');
+                    }
+                }
+                else if (idName == 'pop-up4') { // edit category
+                    const allRows = document.querySelectorAll('.categories table tbody tr');
+
+                    let selectedRow = null;
+                    allRows.forEach(row => {
+                        const idCell = row.querySelector('td:first-child'); // The first <td> is the Id
+                        if (idCell && idCell.textContent.trim() == id.toString()) {
+                            selectedRow = row;
+                        }
+                    });
+
+                    if (selectedRow) {
+                        const cells = selectedRow.querySelectorAll('td');
+                        const idValue = cells[0].textContent.trim();
+                        const nameValue = cells[1].textContent.trim();
+
+                        // get the form inputs
+                        var inputId = document.getElementById('idc');
+                        inputId.value = +idValue;
+
+                        var inputName = document.getElementById('namec');
+                        inputName.value = nameValue;
+
+                    } else {
+                        console.log('Row not found');
+                    }
+                }
+            }
+        }
+        else {
+            alert("Please Close the Pop Up Window First!!");
+        }
+    }
+
+
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = fileInput.files[0].name;
+        } else {
+            fileNameDisplay.textContent = '';
+        }
+    });
+
+    const fileInputu = document.getElementById('fileInputu');
+    const fileNameDisplayu = document.getElementById('fileNameDisplayu');
+
+    fileInputu.addEventListener('change', function () {
+        if (fileInputu.files.length > 0) {
+            fileNameDisplayu.textContent = fileInputu.files[0].name;
+        } else {
+            fileNameDisplayu.textContent = '';
+        }
+    });
+</script>

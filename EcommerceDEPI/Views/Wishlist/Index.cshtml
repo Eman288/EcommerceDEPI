@@ -1,0 +1,47 @@
+﻿@model List<EcommerceDEPI.Models.WishlistProduct>
+
+<div class="wishlist-page py-5">
+    <h2 class="text-center fw-bold mb-5" style="color: var(--c-primary-color);">❤️ قائمة المفضلة</h2>
+
+    @if (!Model.Any())
+    {
+        <p class="text-center text-muted">لا توجد منتجات في قائمة المفضلة حتى الآن.</p>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="wishlist-card shadow-sm">
+                        <div class="image-container">
+                            <img src="@(string.IsNullOrEmpty(item.Product.Picture) ? "/imgs/Product/default.jpg" : item.Product.Picture)"
+                                 alt="@item.Product.Name" />
+                        </div>
+                        <div class="card-body">
+                            <h5 class="product-title">@item.Product.Name</h5>
+                            <p class="product-desc text-muted">@item.Product.Description</p>
+                            <p class="product-price">السعر: <span>$@item.Product.Price</span></p>
+
+                            <form asp-action="RemoveFromWishlist" method="post">
+                                <input type="hidden" name="productId" value="@item.Product.Id" />
+                                <button type="submit" class="btn remove-btn w-100">
+                                    <i class="fas fa-trash-alt me-1"></i> إزالة من المفضلة
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.wishlist-card').forEach(card => {
+            card.addEventListener('mouseover', () => card.style.transform = 'translateY(-4px)');
+            card.addEventListener('mouseout', () => card.style.transform = 'translateY(0)');
+        });
+    </script>
+}

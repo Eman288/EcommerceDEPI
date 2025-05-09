@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using EcommerceDEPI.Models;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li>
+        <a  style="border:0;" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                <img src="~/imgs/Home/profile.png" />
+        </a>
+    </li>
+    <li>
+        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="button">Logout</button>
+        </form>
+    </li>
+}
+else
+{
+    <li>
+        <a asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </li>
+    <li class="button">
+            <a class="button" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </li>
+}
+</ul>

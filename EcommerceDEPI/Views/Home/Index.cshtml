@@ -1,0 +1,301 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@* <div class="text-center">
+     <h1 class="display-4">Welcome</h1>
+     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+ </div>
+
+ @if (User.IsInRole("Admin"))
+ {
+     <h1>Admin</h1>
+ }
+ @if (User.IsInRole("User"))
+ {
+     <h1>User</h1>
+ } *@
+
+<header>
+    <div class="header-text">
+        <h1>Unbox Happiness, One Click Away</h1>
+        <p>
+            Discover a handpicked selection of products designed to make your life easier, brighter,
+            and more joyful. From everyday essentials to special finds, we deliver what you love —
+            fast, easy, and hassle-free. Start shopping now and experience the joy of effortless
+            convenience.
+        </p>
+        <div class="search-box">
+            <form>
+                <input type="text" placeholder="Search for an Item...">
+            </form>
+        </div>
+    </div>
+</header>
+
+
+<section class="sec1">
+    <div class="sec1-text">
+        <h2>Featured Products</h2>
+        <p>Discover our handpicked selection of best-selling and trending items, curated just for you. These products are loved by our customers and guaranteed to bring joy to your everyday life.</p>
+    </div>
+    <div class="sec1-cards">
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sec2">
+    <div class="sec2-text">
+        <h2>View Our Range Of Categories</h2>
+        <p>Explore a wide variety of carefully curated categories designed to suit every taste, style, and need — making your shopping experience smoother and more enjoyable.</p>
+    </div>
+    <div class="sec2-cards">
+        <div data-img="@Url.Content("~/imgs/Home/cloth.jpg")">
+            <p>Classic Cloth</p>
+        </div>
+
+        <div data-img="@Url.Content("~/imgs/Home/sofa.jpg")">
+            <p>Sofa Sets</p>
+        </div>
+
+        <div data-img="@Url.Content("~/imgs/Home/toys.jpg")">
+            <p>Children Toys</p>
+        </div>
+
+        <div data-img="@Url.Content("~/imgs/Home/bed.jpg")">
+            <p>Bedroom Furnituree</p>
+        </div>
+    </div>
+</section>
+
+<section class="sec3">
+    <div class="sec1-text">
+        <div>
+            <h2>Most Popular Products</h2>
+            <p>Enjoy spending money on quality products with confidence in your choice</p>
+        </div>
+
+        <a asp-action="Index" asp-controller="Product">
+            View All ⪢
+        </a>
+    </div>
+    <div class="sec1-cards">
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-img"></div>
+            <h6>Double Bed & Side Tables</h6>
+            <div class="card-details">
+                <p><span class="sec1-oldprice">245$</span> 200$</p>
+                <a asp-action="AddToBasket" asp-controller="Product">
+                    <img src="@Url.Content("~/imgs/Home/add.png")" alt="add" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sec4">
+    <div>
+        <h2>Have a Look at Our Unique Selling Propositions</h2>
+        <a>Read More ⪢</a>
+    </div>
+    <div class="sec4-text">
+        <p>What sets us apart isn't just our product range — it's our commitment to customer satisfaction, quality, and convenience at every step of your shopping journey.</p>
+        <div class="sec4-pro">
+            <div>
+                <h2>99%</h2>
+                <p>Customer satisfaction rate, thanks to our seamless shopping experience and responsive support.</p>
+            </div>
+            <div>
+                <h2>100%</h2>
+                <p>Guaranteed product quality and authenticity — no compromises, ever.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="sec5">
+    <div>
+        <h2>Frequently Asked Questions</h2>
+        <p>These are the most asked questions our clients ask!</p>
+    </div>
+    <div class="sec5-questions">
+        <div onclick="qToggle('q1')" id="q1">
+            <h6>How long does delivery take?</h6>
+            <p>Delivery typically takes 2–5 business days depending on your location and the product's availability.</p>
+        </div>
+
+        <div onclick="qToggle('q2')" id="q2">
+            <h6>What is your return policy?</h6>
+            <p>You can return any item within 14 days of delivery as long as it’s in its original condition and packaging.</p>
+        </div>
+
+        <div onclick="qToggle('q3')" id="q3">
+            <h6>Do you offer international shipping?</h6>
+            <p>Currently, we only ship within the country, but we're working on expanding our reach soon!</p>
+        </div>
+
+        <div onclick="qToggle('q4')" id="q4">
+            <h6>Can I track my order?</h6>
+            <p>Yes! Once your order is shipped, you'll receive a tracking link via email or SMS.</p>
+        </div>
+    </div>
+
+</section>
+
+
+<script>
+    //fix the boxing showing code
+
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const cards = document.querySelectorAll('.sec2-cards > div');
+
+    //     cards.forEach((card, i) => {
+    //         const imgUrl = card.getAttribute('data-img');
+
+    //         const className = `card-bg-${i}`;
+    //         card.classList.add(className);
+
+    //         const style = document.createElement('style');
+    //         style.innerHTML = `
+    //             .${className}::before {
+    //                 background-image: url('${imgUrl}');
+    //             }
+    //         `;
+    //         document.head.appendChild(style);
+    //     });
+    // });
+
+
+    function qToggle(id)
+    {
+        var ele = document.getElementById(id).getElementsByTagName('p')[0];
+        if (ele.style.display == "none")
+        {
+            ele.style.display = "block";
+        }
+        else
+        {
+            ele.style.display = "none";
+        }
+    }
+</script>

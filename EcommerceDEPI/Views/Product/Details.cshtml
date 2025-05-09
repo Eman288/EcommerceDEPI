@@ -1,0 +1,55 @@
+﻿@model EcommerceDEPI.Models.Product
+
+@{
+    ViewData["Title"] = "تفاصيل المنتج";
+}
+
+<div class="product-details">
+    <div class="product-actions">
+        <img src="@(string.IsNullOrEmpty(Model.Picture) ? "default.jpg" : Model.Picture)" class="img-fluid mb-4" alt="@Model.Name">
+        <div>
+            <div class="product-title">
+                <h3>@Model.Name</h3>
+                <h4>@Model.Price</h4>
+                <h5>@Model.Category.Name</h5>
+            </div>
+            <div class="product-button">
+                <a class="btn btn-lg btn-success add-to-cart" data-product-id="@Model.Id">
+                    <i class="fas fa-shopping-cart"></i> Add to The Cart
+                </a> 
+                <p>🚛 Free Worldwide shipping on all orders over 100$</p>
+                <p>🕗 Delivers in: 3-7 working days <a href="#footer">Shipping Policy</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-text">
+        <h1>Description:</h1>
+        <p>@Model.Description</p>
+        <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">Back to Products</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // AJAX add to cart
+        document.querySelector('.add-to-cart').addEventListener('click', function () {
+            let productId = this.getAttribute('data-product-id');
+
+            fetch('/Cart/AddToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `productId=${productId}`
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        toastr.success('تمت إضافة المنتج للسلة!');
+                    } else {
+                        toastr.error(data.message || 'فشل في الإضافة');
+                    }
+                })
+                .catch(() => toastr.error("حدث خطأ"));
+        });
+    </script>
+}

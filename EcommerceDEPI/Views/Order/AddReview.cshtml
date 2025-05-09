@@ -1,0 +1,141 @@
+﻿@model EcommerceDEPI.Models.Review
+
+@{
+    ViewData["Title"] = "Add Review";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white text-center py-4">
+            <h2 class="mb-0"><i class="fas fa-star"></i> Add Your Review for Order #@Model.OrderId</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="AddReview" method="post" id="reviewForm">
+                <input type="hidden" asp-for="OrderId" />
+                <input type="hidden" asp-for="ProductId" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="Rating" id="ratingValue" value="0" />
+
+                <div class="form-group mb-4 text-center">
+                    <label class="form-label text-muted">Rate this product:</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                    </div>
+                    <small class="text-danger" id="ratingError"></small>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="Comment" class="form-label">Your Comment</label>
+                    <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Share your thoughts..." required></textarea>
+                    <span asp-validation-for="Comment" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100" id="submitButton">
+                    <i class="fas fa-paper-plane"></i> Submit Review
+                </button>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger mt-3">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <p>@error.ErrorMessage</p>
+                        }
+                    </div>
+                }
+            </form>
+        </div>
+        <div class="card-footer text-center py-3">
+            <a asp-action="Details" asp-controller="Order" asp-route-id="@Model.OrderId" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Order Details
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const stars = document.querySelectorAll('.star');
+            const ratingValue = document.getElementById('ratingValue');
+            const ratingError = document.getElementById('ratingError');
+            const submitButton = document.getElementById('submitButton');
+            let currentRating = parseInt(ratingValue.value) || 0;
+
+            // تعطيل الزر في البداية
+            submitButton.disabled = true;
+
+            stars.forEach(star => {
+                star.addEventListener('click', function (e) {
+                    e.preventDefault(); // منع أي Event Bubbling
+                    currentRating = parseInt(this.getAttribute('data-value'));
+                    ratingValue.value = currentRating;
+
+                    stars.forEach(s => {
+                        const starValue = parseInt(s.getAttribute('data-value'));
+                        s.innerHTML = starValue <= currentRating
+                            ? '<i class="fas fa-star"></i>'
+                            : '<i class="far fa-star"></i>';
+                    });
+
+                    ratingError.textContent = '';
+                    submitButton.disabled = false; // تفعيل الزر بعد اختيار التقييم
+                });
+
+                star.addEventListener('mouseover', function () {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    stars.forEach(s => {
+                        const starValue = parseInt(s.getAttribute('data-value'));
+                        s.innerHTML = starValue <= value
+                            ? '<i class="fas fa-star"></i>'
+                            : '<i class="far fa-star"></i>';
+                    });
+                });
+
+                star.addEventListener('mouseout', function () {
+                    stars.forEach(s => {
+                        const starValue = parseInt(s.getAttribute('data-value'));
+                        s.innerHTML = starValue <= currentRating
+                            ? '<i class="fas fa-star"></i>'
+                            : '<i class="far fa-star"></i>';
+                    });
+                });
+            });
+
+            document.getElementById('reviewForm').addEventListener('submit', function (e) {
+                if (currentRating < 1 || currentRating > 5) {
+                    e.preventDefault();
+                    ratingError.textContent = 'Please select a rating between 1 and 5.';
+                    submitButton.disabled = true;
+                }
+            });
+        });
+    </script>
+    <style>
+        .star-rating {
+            font-size: 2rem;
+            color: #ffd700;
+            cursor: pointer;
+        }
+
+        .star {
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+
+            .star:hover,
+            .star:hover ~ .star {
+                color: #ffca28;
+            }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+}

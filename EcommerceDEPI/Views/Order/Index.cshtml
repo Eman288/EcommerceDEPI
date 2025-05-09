@@ -1,0 +1,37 @@
+﻿@model List<EcommerceDEPI.Models.Order>
+
+<h2 class="text-center mb-4">My Orders</h2>
+<div class="container">
+    <div class="row g-4">
+        @foreach (var order in Model)
+        {
+            <!-- Determine card background color based on order status -->
+            var cardClass = order.OrderStatus.ToLower() switch
+            {
+                "delivered" => "bg-success bg-opacity-10 border-success",
+                "pending" => "bg-warning bg-opacity-10 border-warning",
+                _ => "bg-light border-secondary"
+            };
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm @cardClass">
+                    <div class="card-body">
+                        <h5 class="card-title text-muted">Order #@order.Id</h5>
+                        <p class="card-text">
+                            <strong>Date:</strong> @order.Date.ToString("dd/MM/yyyy HH:mm")<br>
+                            <strong>Total Price:</strong> @order.TotalPrice.ToString("C")<br>
+                            <strong>Status:</strong>
+                            <span class="badge @cardClass.ToLower().Replace("bg-", "bg-").Replace("border-", "text-")">
+                                @order.OrderStatus
+                            </span>
+                        </p>
+                        <a href="@Url.Action("Details", new { id = order.Id })"
+                           class="btn btn-outline-primary btn-sm w-100">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
